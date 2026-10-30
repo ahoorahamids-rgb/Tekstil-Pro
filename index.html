@@ -1,161 +1,380 @@
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
-let currentPersonnel = 'Ahmet';
-let currentStage = 'Ilik Acma';
-let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekstil Uretim & Zaman Takip Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
 
-function selectPersonnel(name, element) {
-    currentPersonnel = name;
-    document.querySelectorAll('#personnel-grid .btn-select').forEach(b => b.classList.remove('active'));
-    element.classList.add('active');
-}
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 90px; }
 
-function selectStage(stage, element) {
-    currentStage = stage;
-    document.querySelectorAll('#stage-grid .btn-select').forEach(b => b.classList.remove('active'));
-    element.classList.add('active');
-}
+        .container { max-width: 700px; margin: 0 auto; padding: 15px; }
 
-function switchView(viewName, btn) {
-    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('view-' + viewName).classList.add('active');
-    btn.classList.add('active');
-    if(viewName === 'manager') { updateManagerPanel(); renderBrandChart(); }
-    if(viewName === 'qr') { renderPerfChart(); generateQRCode(); }
-}
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
+            border: 1px solid var(--border); margin-bottom: 15px;
+        }
+        .logo-title { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { background: var(--primary); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; }
+        h1 { font-size: 1.1rem; color: var(--text-main); }
+        p.sub { font-size: 0.75rem; color: var(--text-muted); }
 
-function calculateHours(start, end) {
-    let [sH, sM] = start.split(':').map(Number);
-    let [eH, eM] = end.split(':').map(Number);
-    let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
-    if (diffMinutes <= 0) return '1 Saat';
-    let hours = Math.floor(diffMinutes / 60);
-    let minutes = diffMinutes % 60;
-    if (hours > 0 && minutes > 0) {
-        return ${hours} Saat ${minutes} Dk;
-    } else if (hours > 0) {
-        return ${hours} Saat;
-    } else {
-        return ${minutes} Dk;
-    }
-}
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 15px; margin-bottom: 12px;
+        }
+        .card-title { font-size: 0.9rem; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
 
-function saveRecordToCloud() {
-    const qty = parseInt(document.getElementById('quantity-input').value);
-    const startTime = document.getElementById('start-time').value;
-    const endTime = document.getElementById('end-time').value;
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
-    if(!qty || qty <= 0) { alert('Lutfen gecerli bir adet giriniz!'); return; }
+        .btn-select {
+            background: #0f172a; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-select.active { background: var(--primary); color: white; border-color: var(--accent); font-weight: bold; }
 
-    const duration = calculateHours(startTime, endTime);
+        .time-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        label { font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
+        input, select {
+            width: 100%; background: #0f172a; border: 1px solid var(--border);
+            color: var(--text-main); padding: 10px; border-radius: 8px; outline: none; font-size: 0.85rem;
+        }
 
-    const record = {
-        personnel: currentPersonnel,
-        stage: currentStage,
-        brand: document.getElementById('brand-select').value,
-        model: document.getElementById('model-select').value,
-        quantity: qty,
-        duration: ${startTime} - ${endTime} (${duration})
-    };
+        .btn-submit {
+            width: 100%; background: var(--success); color: white; border: none;
+            padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold;
+            cursor: pointer; margin-top: 10px; transition: 0.2s;
+        }
+        .btn-submit:hover { opacity: 0.9; }
 
-    localRecords.unshift(record);
-    localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 999;
+        }
+        .nav-item {
+            background: none; border: none; color: var(--text-muted); font-size: 0.8rem;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
+        }
+        .nav-item.active { color: var(--accent); font-weight: bold; }
 
-    const btn = document.querySelector('.btn-submit');
-    btn.innerText = 'Kaydediliyor...';
-    btn.disabled = true;
+        .view-section { display: none; }
+        .view-section.active { display: block; }
 
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(record)
-    }).then(() => {
-        alert('Basariyla kaydedildi!');
-        btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
-        btn.disabled = false;
-        updateManagerPanel();
-    }).catch(error => {
-        console.error('Error:', error);
-        alert('Google Sheets baglantisinda hata olustu ancak yerel kaydedildi.');
-        btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
-        btn.disabled = false;
-    });
-}
+        .kpi-card {
+            background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .kpi-val { font-weight: bold; color: var(--accent); }
+.record-item {
+            background: #0f172a; border-left: 4px solid var(--primary); padding: 10px;
+            border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .btn-delete {
+            background: var(--danger); color: white; border: none; padding: 6px 10px;
+            border-radius: 6px; cursor: pointer; font-size: 0.75rem;
+        }
+        #qrcode { display: flex; justify-content: center; background: white; padding: 15px; border-radius: 8px; margin-top: 10px; width: fit-content; margin-left: auto; margin-right: auto; }
+    </style>
+</head>
+<body>
 
-function deleteRecord(index) {
-    if(confirm('Bu kaydi silmek istediginize emin misiniz?')) {
-        localRecords.splice(index, 1);
-        localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
-        updateManagerPanel();
-        renderBrandChart();
-    }
-}
-
-function updateManagerPanel() {
-    let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
-    document.getElementById('stat-count').innerText = localRecords.length + ' Kayit';
-    document.getElementById('stat-total').innerText = totalQty + ' Adet';
-
-    let html = '';
-    localRecords.forEach((r, index) => {
-        html += `
-            <div class="record-item">
-<div>
-                    <strong>${r.personnel}</strong> - ${r.brand} (${r.quantity} Adet)<br>
-                    <small style="color:var(--text-muted);">${r.stage} | ${r.duration}</small>
+    <div class="container">
+        <header>
+            <div class="logo-title">
+                <div class="logo-icon">🧵</div>
+                <div>
+                    <h1>Tekstil Takip Pro</h1>
+                    <p class="sub">Bulut Google Sheets Entegrasyonu</p>
                 </div>
-                <button class="btn-delete" onclick="deleteRecord(${index})">Sil 🗑️</button>
-            </div>`;
-    });
-    document.getElementById('records-list').innerHTML = html || 'Kayit bulunmuyor.';
-}
+            </div>
+        </header>
 
-let brandChartObj = null;
-function renderBrandChart() {
-    const ctx = document.getElementById('brandChart').getContext('2d');
-    const brandTotals = {};
-    localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
+        <!-- VIEW 1: RECORD ENTRY -->
+        <div id="view-entry" class="view-section active">
+            <div class="card">
+                <div class="card-title">1. Personel Seciniz</div>
+                <div class="grid-3" id="personnel-grid">
+                    <div class="btn-select active" onclick="selectPersonnel('Ahmet', this)">Ahmet</div>
+                    <div class="btn-select" onclick="selectPersonnel('Mehmet', this)">Mehmet</div>
+                    <div class="btn-select" onclick="selectPersonnel('Ali', this)">Ali</div>
+                    <div class="btn-select" onclick="selectPersonnel('Can', this)">Can</div>
+                    <div class="btn-select" onclick="selectPersonnel('Zeynep', this)">Zeynep</div>
+                    <div class="btn-select" onclick="selectPersonnel('Ahoora', this)">Ahoora</div>
+                </div>
+            </div>
 
-    if(brandChartObj) brandChartObj.destroy();
-    brandChartObj = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(brandTotals).length ? Object.keys(brandTotals) : ['Veri Yok'],
-            datasets: [{
-                data: Object.values(brandTotals).length ? Object.values(brandTotals) : [1],
-                backgroundColor: ['#2563eb', '#38bdf8', '#22c55e', '#f59e0b']
-            }]
-        },
-        options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } } }
-    });
-}
+            <div class="card">
+                <div class="card-title">2. Yapilan Is / Asama</div>
+                <div class="grid-2" id="stage-grid">
+                    <div class="btn-select active" onclick="selectStage('Ilik Acma', this)">Ilik Acma</div>
+                    <div class="btn-select" onclick="selectStage('Dugme Yer', this)">Dugme Yeri</div>
+                    <div class="btn-select" onclick="selectStage('Dugme Dikim', this)">Dugme Dikimi</div>
+                    <div class="btn-select" onclick="selectStage('Paketleme', this)">Paketleme</div>
+                </div>
+            </div>
 
-let perfChartObj = null;
-function renderPerfChart() {
-    const ctx = document.getElementById('perfChart').getContext('2d');
-    const personnelTotals = {};
-    localRecords.forEach(r => { personnelTotals[r.personnel] = (personnelTotals[r.personnel] || 0) + r.quantity; });
+            <div class="card">
+                <div class="card-title">3. Marka, Model & Miktar</div>
+                <div class="grid-2">
+                    <div>
+                        <label>Marka</label>
+                        <select id="brand-select">
+                            <option>LC Waikiki</option>
+                            <option>Mavi</option>
+                            <option>DeFacto</option>
+                            <option>Koton</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Model</label>
+                        <select id="model-select">
+                            <option>Gomlek 101</option>
+                            <option>Pantolon 202</option>
+                            <option>Mont 303</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Adet</label>
+                    <input type="number" id="quantity-input" value="100" placeholder="Miktar">
+                </div>
+            </div>
 
-    if(perfChartObj) perfChartObj.destroy();
-    perfChartObj = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
-            datasets: [{ label: 'Uretim Miktari', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
-        },
-        options: { responsive: true, scales: { y: { beginAtZero: true } } }
-    });
-}
+            <div class="card">
+                <div class="card-title">4. Calisma Zamani (Saat Takibi)</div>
+                <div class="time-inputs">
+                    <div>
+<label>Baslangic</label>
+                        <input type="time" id="start-time" value="08:30">
+                    </div>
+                    <div>
+                        <label>Bitis</label>
+                        <input type="time" id="end-time" value="12:00">
+                    </div>
+                </div>
+            </div>
 
-let qrInitialized = false;
-function generateQRCode() {
-    const qrContainer = document.getElementById("qrcode");
-    if(!qrContainer) return;
-    qrContainer.innerHTML = "";
-    new QRCode(qrContainer, {
-        text: window.location.href,
-        width: 140,
-        height: 140
-    });
-}
+            <button class="btn-submit" onclick="saveRecordToCloud()">GOOGLE SHEETS'E KAYDET</button>
+        </div>
+
+        <!-- VIEW 2: MANAGER & RECORDS -->
+        <div id="view-manager" class="view-section">
+            <div class="card">
+                <div class="card-title">Yonetici Ozet Raporu</div>
+                <div class="kpi-card"><span>Toplam Kayit:</span> <span class="kpi-val" id="stat-count">0 Kayit</span></div>
+                <div class="kpi-card"><span>Toplam Uretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Kayit Yonetimi (Sil / سطل آشغال)</div>
+                <div id="records-list">Kayit bulunmuyor.</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Marka Dagilimi</div>
+                <canvas id="brandChart" style="max-height: 180px;"></canvas>
+            </div>
+        </div>
+
+        <!-- VIEW 3: QR CODE & PERFORMANCE -->
+        <div id="view-qr" class="view-section">
+            <div class="card" style="text-align: center;">
+                <div class="card-title">Karگاه QR Code (دسترسی سریع)</div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Для входа сканируйте / اسکن کنید</p>
+                <div id="qrcode"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">Personel Performansi</div>
+                <canvas id="perfChart" style="max-height: 180px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchView('entry', this)"><span>Kayit</span></button>
+        <button class="nav-item" onclick="switchView('manager', this)"><span>Yonetici</span></button>
+        <button class="nav-item" onclick="switchView('qr', this)"><span>QR & Grafik</span></button>
+    </nav>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
+        let currentPersonnel = 'Ahmet';
+        let currentStage = 'Ilik Acma';
+        let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
+
+        function selectPersonnel(name, element) {
+            currentPersonnel = name;
+            document.querySelectorAll('#personnel-grid .btn-select').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function selectStage(stage, element) {
+            currentStage = stage;
+            document.querySelectorAll('#stage-grid .btn-select').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function switchView(viewName, btn) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+            btn.classList.add('active');
+            if(viewName === 'manager') { updateManagerPanel(); renderBrandChart(); }
+            if(viewName === 'qr') { renderPerfChart(); generateQRCode(); }
+        }
+
+        function calculateHours(start, end) {
+            let [sH, sM] = start.split(':').map(Number);
+let [eH, eM] = end.split(':').map(Number);
+            let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
+            if (diffMinutes <= 0) return '1 Saat';
+            let hours = Math.floor(diffMinutes / 60);
+            let minutes = diffMinutes % 60;
+            if (hours > 0 && minutes > 0) {
+                return ${hours} Saat ${minutes} Dk;
+            } else if (hours > 0) {
+                return ${hours} Saat;
+            } else {
+                return ${minutes} Dk;
+            }
+        }
+
+        function saveRecordToCloud() {
+            const qty = parseInt(document.getElementById('quantity-input').value);
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+
+            if(!qty || qty <= 0) { alert('Lutfen gecerli bir adet giriniz!'); return; }
+
+            const duration = calculateHours(startTime, endTime);
+
+            const record = {
+                personnel: currentPersonnel,
+                stage: currentStage,
+                brand: document.getElementById('brand-select').value,
+                model: document.getElementById('model-select').value,
+                quantity: qty,
+                duration: ${startTime} - ${endTime} (${duration})
+            };
+
+            localRecords.unshift(record);
+            localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
+
+            const btn = document.querySelector('.btn-submit');
+            btn.innerText = 'Kaydediliyor...';
+            btn.disabled = true;
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(record)
+            }).then(() => {
+                alert('Basariyla kaydedildi!');
+                btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
+                btn.disabled = false;
+                updateManagerPanel();
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('Google Sheets baglantisinda hata olustu ancak yerel kaydedildi.');
+                btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
+                btn.disabled = false;
+            });
+        }
+
+        function deleteRecord(index) {
+            if(confirm('Bu kaydi silmek istediginize emin misiniz?')) {
+                localRecords.splice(index, 1);
+                localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
+                updateManagerPanel();
+                renderBrandChart();
+            }
+        }
+
+        function updateManagerPanel() {
+            let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
+            document.getElementById('stat-count').innerText = localRecords.length + ' Kayit';
+            document.getElementById('stat-total').innerText = totalQty + ' Adet';
+
+            let html = '';
+            localRecords.forEach((r, index) => {
+                html += 
+                    <div class="record-item">
+                        <div>
+                            <strong>${r.personnel}</strong> - ${r.brand} (${r.quantity} Adet)<br>
+                            <small style="color:var(--text-muted);">${r.stage} | ${r.duration}</small>
+                        </div>
+                        <button class="btn-delete" onclick="deleteRecord(${index})">Sil 🗑️</button>
+                    </div>;
+            });
+            document.getElementById('records-list').innerHTML = html || 'Kayit bulunmuyor.';
+        }
+
+        let brandChartObj = null;
+        function renderBrandChart() {
+            const ctx = document.getElementById('brandChart').getContext('2d');
+            const brandTotals = {};
+            localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
+if(brandChartObj) brandChartObj.destroy();
+            brandChartObj = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(brandTotals).length ? Object.keys(brandTotals) : ['Veri Yok'],
+                    datasets: [{
+                        data: Object.values(brandTotals).length ? Object.values(brandTotals) : [1],
+                        backgroundColor: ['#2563eb', '#38bdf8', '#22c55e', '#f59e0b']
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } } }
+            });
+        }
+
+        let perfChartObj = null;
+        function renderPerfChart() {
+            const ctx = document.getElementById('perfChart').getContext('2d');
+            const personnelTotals = {};
+            localRecords.forEach(r => { personnelTotals[r.personnel] = (personnelTotals[r.personnel] || 0) + r.quantity; });
+
+            if(perfChartObj) perfChartObj.destroy();
+            perfChartObj = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
+                    datasets: [{ label: 'Uretim Miktari', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+
+        let qrInitialized = false;
+        function generateQRCode() {
+            const qrContainer = document.getElementById("qrcode");
+            if(!qrContainer) return;
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: window.location.href,
+                width: 140,
+                height: 140
+            });
+        }
+    </script>
+</body>
+</html>
