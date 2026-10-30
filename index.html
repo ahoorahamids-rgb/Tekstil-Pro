@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tekstil Uretim & Zaman Takip Pro</title>
+    <title>Tekstil Üretim & Zaman Takip Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
@@ -109,7 +109,7 @@
         <!-- VIEW 1: RECORD ENTRY -->
         <div id="view-entry" class="view-section active">
             <div class="card">
-                <div class="card-title">1. Personel Seciniz</div>
+                <div class="card-title">1. Personel Seçiniz</div>
                 <div class="grid-3" id="personnel-grid">
                     <div class="btn-select active" onclick="selectPersonnel('Ahmet', this)">Ahmet</div>
                     <div class="btn-select" onclick="selectPersonnel('Mehmet', this)">Mehmet</div>
@@ -121,12 +121,12 @@
             </div>
 
             <div class="card">
-                <div class="card-title">2. Yapilan Is / Asama</div>
+                <div class="card-title">2. Yapılan İş / Aşama</div>
                 <div class="grid-2" id="stage-grid">
-                    <div class="btn-select active" onclick="selectStage('Ilik Acma', this)">Ilik Acma</div>
-                    <div class="btn-select" onclick="selectStage('Dugme Yer', this)">Dugme Yeri</div>
-                    <div class="btn-select" onclick="selectStage('Dugme Dikim', this)">Dugme Dikimi</div>
-                    <div class="btn-select" onclick="selectStage('Paketleme', this)">Paketleme</div>
+                    <div class="btn-select active" onclick="selectStage('İlik Açma', this)">🔘 İlik Açma</div>
+                    <div class="btn-select" onclick="selectStage('Düğme Yer', this)">🎯 Düğme Yeri</div>
+                    <div class="btn-select" onclick="selectStage('Düğme Dikim', this)">⭕ Düğme Dikimi</div>
+                    <div class="btn-select" onclick="selectStage('Paketleme', this)">📦 Paketleme</div>
                 </div>
             </div>
 
@@ -145,7 +145,7 @@
                     <div>
                         <label>Model</label>
                         <select id="model-select">
-                            <option>Gomlek 101</option>
+                            <option>Gömlek 101</option>
                             <option>Pantolon 202</option>
                             <option>Mont 303</option>
                         </select>
@@ -158,37 +158,37 @@
             </div>
 
             <div class="card">
-                <div class="card-title">4. Calisma Zamani (Saat Takibi)</div>
+                <div class="card-title">4. Çalışma Zamanı (Saat Takibi)</div>
                 <div class="time-inputs">
                     <div>
-<label>Baslangic</label>
+<label>Başlangıç</label>
                         <input type="time" id="start-time" value="08:30">
                     </div>
                     <div>
-                        <label>Bitis</label>
+                        <label>Bitiş</label>
                         <input type="time" id="end-time" value="12:00">
                     </div>
                 </div>
             </div>
 
-            <button class="btn-submit" onclick="saveRecordToCloud()">GOOGLE SHEETS'E KAYDET</button>
+            <button class="btn-submit" onclick="saveRecordToCloud()">☁️ GOOGLE SHEETS'E KAYDET</button>
         </div>
 
         <!-- VIEW 2: MANAGER & RECORDS -->
         <div id="view-manager" class="view-section">
             <div class="card">
-                <div class="card-title">Yonetici Ozet Raporu</div>
-                <div class="kpi-card"><span>Toplam Kayit:</span> <span class="kpi-val" id="stat-count">0 Kayit</span></div>
-                <div class="kpi-card"><span>Toplam Uretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
+                <div class="card-title">Yönetici Özet Raporu</div>
+                <div class="kpi-card"><span>Toplam Kayıt:</span> <span class="kpi-val" id="stat-count">0 Kayıt</span></div>
+                <div class="kpi-card"><span>Toplam Üretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
             </div>
 
             <div class="card">
-                <div class="card-title">Kayit Yonetimi (Sil / سطل آشغال)</div>
-                <div id="records-list">Kayit bulunmuyor.</div>
+                <div class="card-title">Kayıt Yönetimi (🗑️ حذف / سطل آشغال)</div>
+                <div id="records-list">Kayıt bulunmuyor.</div>
             </div>
 
             <div class="card">
-                <div class="card-title">Marka Dagilimi</div>
+                <div class="card-title">Marka Dağılımı</div>
                 <canvas id="brandChart" style="max-height: 180px;"></canvas>
             </div>
         </div>
@@ -196,12 +196,12 @@
         <!-- VIEW 3: QR CODE & PERFORMANCE -->
         <div id="view-qr" class="view-section">
             <div class="card" style="text-align: center;">
-                <div class="card-title">Karگاه QR Code (دسترسی سریع)</div>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">اسکن کنید</p>
+                <div class="card-title">📱 کارگاه QR Code (دسترسی سریع)</div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">برای ورود پرسنل به اپلیکیشن اسکن کنید</p>
                 <div id="qrcode"></div>
             </div>
             <div class="card">
-                <div class="card-title">Personel Performansi</div>
+                <div class="card-title">Personel Performansı</div>
                 <canvas id="perfChart" style="max-height: 180px;"></canvas>
             </div>
         </div>
@@ -209,15 +209,15 @@
 
     <!-- NAVIGATION -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchView('entry', this)"><span>Kayit</span></button>
-        <button class="nav-item" onclick="switchView('manager', this)"><span>Yonetici</span></button>
-        <button class="nav-item" onclick="switchView('qr', this)"><span>QR & Grafik</span></button>
+        <button class="nav-item active" onclick="switchView('entry', this)"><span>📝</span><span>Kayıt</span></button>
+        <button class="nav-item" onclick="switchView('manager', this)"><span>📊</span><span>Yönetici</span></button>
+        <button class="nav-item" onclick="switchView('qr', this)"><span>📷</span><span>QR & Grafik</span></button>
     </nav>
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
         let currentPersonnel = 'Ahmet';
-        let currentStage = 'Ilik Acma';
+        let currentStage = 'İlik Açma';
         let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
 
         function selectPersonnel(name, element) {
@@ -242,9 +242,9 @@
         }
 
         function calculateHours(start, end) {
-            let [sH, sM] = start.split(':').map(Number);
+let [sH, sM] = start.split(':').map(Number);
             let [eH, eM] = end.split(':').map(Number);
-let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
+            let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
             if (diffMinutes <= 0) return '1 Saat';
             let hours = Math.floor(diffMinutes / 60);
             let minutes = diffMinutes % 60;
@@ -262,7 +262,7 @@ let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
 
-            if(!qty || qty <= 0) { alert('Lutfen gecerli bir adet giriniz!'); return; }
+            if(!qty || qty <= 0) { alert('Lütfen geçerli bir adet giriniz!'); return; }
 
             const duration = calculateHours(startTime, endTime);
 
@@ -279,7 +279,7 @@ let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
             localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
 
             const btn = document.querySelector('.btn-submit');
-            btn.innerText = 'Kaydediliyor...';
+            btn.innerText = '⏳ Kaydediliyor...';
             btn.disabled = true;
 
             fetch(SCRIPT_URL, {
@@ -288,20 +288,19 @@ let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(record)
             }).then(() => {
-                alert('Basariyla kaydedildi!');
-                btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
+                alert('✅ Kayıt Google Sheets ve sisteme başarıyla işlendi!');
+                btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
                 btn.disabled = false;
-                updateManagerPanel();
             }).catch(error => {
                 console.error('Error:', error);
-                alert('Google Sheets baglantisinda hata olustu ancak yerel kaydedildi.');
-                btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
+                alert('⚠️ Google Sheets bağlantısında hata oluştu ancak yerel kaydedildi.');
+                btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
                 btn.disabled = false;
             });
         }
 
         function deleteRecord(index) {
-            if(confirm('Bu kaydi silmek istediginize emin misiniz?')) {
+            if(confirm('Bu kaydı silmek istediğinize emin misiniz?')) {
                 localRecords.splice(index, 1);
                 localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
                 updateManagerPanel();
@@ -311,7 +310,7 @@ let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
 
         function updateManagerPanel() {
             let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
-            document.getElementById('stat-count').innerText = localRecords.length + ' Kayit';
+            document.getElementById('stat-count').innerText = localRecords.length + ' Kayıt';
             document.getElementById('stat-total').innerText = totalQty + ' Adet';
 
             let html = '';
@@ -322,10 +321,10 @@ let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
                             <strong>${r.personnel}</strong> - ${r.brand} (${r.quantity} Adet)<br>
                             <small style="color:var(--text-muted);">${r.stage} | ${r.duration}</small>
                         </div>
-                        <button class="btn-delete" onclick="deleteRecord(${index})">Sil 🗑️</button>
+                        <button class="btn-delete" onclick="deleteRecord(${index})">🗑️ حذف</button>
                     </div>;
             });
-            document.getElementById('records-list').innerHTML = html || 'Kayit bulunmuyor.';
+            document.getElementById('records-list').innerHTML = html || 'Kayıt bulunmuyor.';
         }
 
         let brandChartObj = null;
@@ -358,7 +357,7 @@ if(brandChartObj) brandChartObj.destroy();
                 type: 'bar',
                 data: {
                     labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
-                    datasets: [{ label: 'Uretim Miktari', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
+                    datasets: [{ label: 'Üretim Miktarı', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
                 },
                 options: { responsive: true, scales: { y: { beginAtZero: true } } }
             });
@@ -366,14 +365,14 @@ if(brandChartObj) brandChartObj.destroy();
 
         let qrInitialized = false;
         function generateQRCode() {
-            const qrContainer = document.getElementById("qrcode");
-            if(!qrContainer) return;
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
+            if(qrInitialized) return;
+            document.getElementById("qrcode").innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
                 text: window.location.href,
-                width: 140,
-                height: 140
+                width: 130,
+                height: 130
             });
+            qrInitialized = true;
         }
     </script>
 </body>
