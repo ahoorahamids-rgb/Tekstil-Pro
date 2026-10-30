@@ -183,7 +183,7 @@
             </div>
 
             <div class="card">
-                <div class="card-title">Kayıt Yönetimi (🗑️ حذف / سطل آشغال)</div>
+                <div class="card-title">Kayıt Yönetimi (Sطل آشغال / حذف)</div>
                 <div id="records-list">Kayıt bulunmuyor.</div>
             </div>
 
@@ -242,22 +242,12 @@
         }
 
         function calculateHours(start, end) {
-let [sH, sM] = start.split(':').map(Number);
+            let [sH, sM] = start.split(':').map(Number);
             let [eH, eM] = end.split(':').map(Number);
             let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
-            if (diffMinutes <= 0) return '1 Saat';
-            let hours = Math.floor(diffMinutes / 60);
-            let minutes = diffMinutes % 60;
-            if (hours > 0 && minutes > 0) {
-                return ${hours} Saat ${minutes} Dk;
-            } else if (hours > 0) {
-                return ${hours} Saat;
-            } else {
-                return ${minutes} Dk;
-            }
+            return diffMinutes > 0 ? (diffMinutes / 60).toFixed(1) + ' Saat' : '0.5 Saat';
         }
-
-        function saveRecordToCloud() {
+function saveRecordToCloud() {
             const qty = parseInt(document.getElementById('quantity-input').value);
             const startTime = document.getElementById('start-time').value;
             const endTime = document.getElementById('end-time').value;
@@ -332,7 +322,8 @@ let [sH, sM] = start.split(':').map(Number);
             const ctx = document.getElementById('brandChart').getContext('2d');
             const brandTotals = {};
             localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
-if(brandChartObj) brandChartObj.destroy();
+
+            if(brandChartObj) brandChartObj.destroy();
             brandChartObj = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
@@ -345,8 +336,7 @@ if(brandChartObj) brandChartObj.destroy();
                 options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } } }
             });
         }
-
-        let perfChartObj = null;
+let perfChartObj = null;
         function renderPerfChart() {
             const ctx = document.getElementById('perfChart').getContext('2d');
             const personnelTotals = {};
