@@ -1,0 +1,163 @@
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
+let currentPersonnel = 'Ahmet';
+let currentStage = 'İlik Açma';
+let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
+
+function selectPersonnel(name, element) {
+currentPersonnel = name;
+document.querySelectorAll('#personnel-grid .btn-select').forEach(b => b.classList.remove('active'));
+element.classList.add('active');
+}
+
+function selectStage(stage, element) {
+currentStage = stage;
+document.querySelectorAll('#stage-grid .btn-select').forEach(b => b.classList.remove('active'));
+element.classList.add('active');
+}
+
+function switchView(viewName, btn) {
+document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+document.getElementById('view-' + viewName).classList.add('active');
+btn.classList.add('active');
+if(viewName === 'manager') { updateManagerPanel(); renderBrandChart(); }
+if(viewName === 'qr') { renderPerfChart(); generateQRCode(); }
+}
+
+function calculateHours(start, end) {
+let [sH, sM] = start.split(':').map(Number);
+let [eH, eM] = end.split(':').map(Number);
+let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
+if (diffMinutes <= 0) return '1 Saat';
+let hours = Math.floor(diffMinutes / 60);
+let minutes = diffMinutes % 60;
+if (hours > 0 && minutes > 0) {
+return ${hours} Saat ${minutes} Dk;
+} else if (hours > 0) {
+return ${hours} Saat;
+} else {
+return ${minutes} Dk;
+}
+}
+
+function saveRecordToCloud() {
+const qty = parseInt(document.getElementById('quantity-input').value);
+const startTime = document.getElementById('start-time').value;
+const endTime = document.getElementById('end-time').value;
+
+if(!qty || qty <= 0) { alert('Lütfen geçerli bir adet giriniz!'); return; }
+
+const duration = calculateHours(startTime, endTime);
+
+const record = {
+personnel: currentPersonnel,
+stage: currentStage,
+brand: document.getElementById('brand-select').value,
+model: document.getElementById('model-select').value,
+quantity: qty,
+duration: ${startTime} - ${endTime} (${duration})
+};
+
+localRecords.unshift(record);
+localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
+
+const btn = document.querySelector('.btn-submit');
+btn.innerText = '⏳ Kaydediliyor...';
+btn.disabled = true;
+
+fetch(SCRIPT_URL, {
+method: 'POST',
+mode: 'no-cors',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(record)
+}).then(() => {
+alert('✅ Kayıt Google Sheets ve sisteme başarıyla işlendi!');
+btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
+btn.disabled = false;
+}).catch(error => {
+console.error('Error:', error);
+alert('⚠️ Google Sheets bağlantısında hata oluştu ancak yerel kaydedildi.');
+btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
+btn.disabled = false;
+});
+}
+
+function deleteRecord(index) {
+if(confirm('Bu kaydı silmek istediğinize emin misiniz?')) {
+localRecords.splice(index, 1);
+localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
+updateManagerPanel();
+renderBrandChart();
+}
+}
+
+function updateManagerPanel() {
+let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
+document.getElementById('stat-count').innerText = localRecords.length + ' Kayıt';
+document.getElementById('stat-total').innerText = totalQty + ' Adet';
+
+let html = '';
+localRecords.forEach((r, index) => {
+html += `
+
+
+<div class="record-item">
+<div>
+<strong>${r.personnel}</strong> - ${r.brand} (${r.quantity} Adet)<br>
+<small style="color:var(--text-muted);">${r.stage} | ${r.duration}</small>
+</div>
+<button class="btn-delete" onclick="deleteRecord(${index})">🗑️ حذف</button>
+</div>`;
+});
+document.getElementById('records-list').innerHTML = html || 'Kayıt bulunmuyor.';
+}
+
+let brandChartObj = null;
+function renderBrandChart() {
+const ctx = document.getElementById('brandChart').getContext('2d');
+const brandTotals = {};
+localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
+
+if(brandChartObj) brandChartObj.destroy();
+brandChartObj = new Chart(ctx, {
+type: 'doughnut',
+data: {
+labels: Object.keys(brandTotals).length ? Object.keys(brandTotals) : ['Veri Yok'],
+datasets: [{
+data: Object.values(brandTotals).length ? Object.values(brandTotals) : [1],
+backgroundColor: ['#2563eb', '#38bdf8', '#22c55e', '#f59e0b']
+}]
+},
+options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } } }
+});
+}
+
+let perfChartObj = null;
+function renderPerfChart() {
+const ctx = document.getElementById('perfChart').getContext('2d');
+const personnelTotals = {};
+localRecords.forEach(r => { personnelTotals[r.personnel] = (personnelTotals[r.personnel] || 0) + r.quantity; });
+
+if(perfChartObj) perfChartObj.destroy();
+perfChartObj = new Chart(ctx, {
+type: 'bar',
+data: {
+labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
+datasets: [{ label: 'Üretim Miktarı', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
+},
+options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+}
+
+let qrInitialized = false;
+function generateQRCode() {
+if(qrInitialized) return;
+document.getElementById("qrcode").innerHTML = "";
+new QRCode(document.getElementById("qrcode"), {
+text: window.location.href,
+width: 130,
+height: 130
+});
+qrInitialized = true;
+}
