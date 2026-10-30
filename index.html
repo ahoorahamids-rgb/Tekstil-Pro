@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tekstil Uretim & Zaman Takip Pro</title>
+<title>Tekstil Üretim & Zaman Takip Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
 --bg-main: #0f172a;
@@ -13,7 +12,6 @@
 --primary: #2563eb;
 --accent: #38bdf8;
 --success: #22c55e;
---danger: #ef4444;
 --text-main: #f8fafc;
 --text-muted: #94a3b8;
 --border: #334155;
@@ -81,21 +79,10 @@ background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--
 display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
 }
 .kpi-val { font-weight: bold; color: var(--accent); }
-
-
-.record-item {
-background: #0f172a; border-left: 4px solid var(--primary); padding: 10px;
-border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem;
-display: flex; justify-content: space-between; align-items: center;
-}
-.btn-delete {
-background: var(--danger); color: white; border: none; padding: 6px 10px;
-border-radius: 6px; cursor: pointer; font-size: 0.75rem;
-}
-#qrcode { display: flex; justify-content: center; background: white; padding: 15px; border-radius: 8px; margin-top: 10px; width: fit-content; margin-left: auto; margin-right: auto; }
 </style>
 </head>
 <body>
+
 
 <div class="container">
 <header>
@@ -111,7 +98,7 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 <!-- VIEW 1: RECORD ENTRY -->
 <div id="view-entry" class="view-section active">
 <div class="card">
-<div class="card-title">1. Personel Seciniz</div>
+<div class="card-title">1. Personel Seçiniz</div>
 <div class="grid-3" id="personnel-grid">
 <div class="btn-select active" onclick="selectPersonnel('Ahmet', this)">Ahmet</div>
 <div class="btn-select" onclick="selectPersonnel('Mehmet', this)">Mehmet</div>
@@ -123,12 +110,12 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 
 <div class="card">
-<div class="card-title">2. Yapilan Is / Asama</div>
+<div class="card-title">2. Yapılan İş / Aşama</div>
 <div class="grid-2" id="stage-grid">
-<div class="btn-select active" onclick="selectStage('Ilik Acma', this)">Ilik Acma</div>
-<div class="btn-select" onclick="selectStage('Dugme Yer', this)">Dugme Yeri</div>
-<div class="btn-select" onclick="selectStage('Dugme Dikim', this)">Dugme Dikimi</div>
-<div class="btn-select" onclick="selectStage('Paketleme', this)">Paketleme</div>
+<div class="btn-select active" onclick="selectStage('İlik Açma', this)">🔘 İlik Açma</div>
+<div class="btn-select" onclick="selectStage('Düğme Yer', this)">🎯 Düğme Yeri</div>
+<div class="btn-select" onclick="selectStage('Düğme Dikim', this)">⭕ Düğme Dikimi</div>
+<div class="btn-select" onclick="selectStage('Paketleme', this)">📦 Paketleme</div>
 </div>
 </div>
 
@@ -147,81 +134,76 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 <div>
 <label>Model</label>
 <select id="model-select">
-<option>Gomlek 101</option>
+<option>Gömlek 101</option>
 <option>Pantolon 202</option>
 <option>Mont 303</option>
 </select>
 </div>
 </div>
 <div style="margin-top: 10px;">
-<label>Adet</label>
+<label>Beden ve Adet</label>
+<div class="grid-2">
+<select id="size-select">
+<option>XS</option><option>S</option><option selected>M</option>
+<option>L</option><option>XL</option><option>XXL</option>
+</select>
 <input type="number" id="quantity-input" value="100" placeholder="Miktar">
+</div>
 </div>
 </div>
 
 <div class="card">
-<div class="card-title">4. Calisma Zamani (Saat Takibi)</div>
+<div class="card-title">4. Çalışma Zamanı (Saat Takibi)</div>
 <div class="time-inputs">
 <div>
-
-
-<label>Baslangic</label>
+<label>Başlangıç Saati</label>
 <input type="time" id="start-time" value="08:30">
 </div>
 <div>
-<label>Bitis</label>
+<label>Bitiş Saati</label>
 <input type="time" id="end-time" value="12:00">
 </div>
 </div>
 </div>
 
-<button class="btn-submit" onclick="saveRecordToCloud()">GOOGLE SHEETS'E KAYDET</button>
+<button class="btn-submit" onclick="saveRecordToCloud()">☁️ GOOGLE SHEETS'E KAYDET</button>
 </div>
 
-<!-- VIEW 2: MANAGER & RECORDS -->
+
+<!-- VIEW 2: MANAGER & CHARTS -->
 <div id="view-manager" class="view-section">
 <div class="card">
-<div class="card-title">Yonetici Ozet Raporu</div>
-<div class="kpi-card"><span>Toplam Kayit:</span> <span class="kpi-val" id="stat-count">0 Kayit</span></div>
-<div class="kpi-card"><span>Toplam Uretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
+<div class="card-title">Yönetici Özet Raporu</div>
+<div class="kpi-card"><span>Toplam Kayıt:</span> <span class="kpi-val" id="stat-count">0 Kayıt</span></div>
+<div class="kpi-card"><span>Toplam Üretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
 </div>
 
 <div class="card">
-<div class="card-title">Kayit Yonetimi (Sil / سطل آشغال)</div>
-<div id="records-list">Kayit bulunmuyor.</div>
-</div>
-
-<div class="card">
-<div class="card-title">Marka Dagilimi</div>
-<canvas id="brandChart" style="max-height: 180px;"></canvas>
+<div class="card-title">Marka Bazlı Dağılım (Dairesel)</div>
+<canvas id="brandChart" style="max-height: 200px;"></canvas>
 </div>
 </div>
 
-<!-- VIEW 3: QR CODE & PERFORMANCE -->
-<div id="view-qr" class="view-section">
-<div class="card" style="text-align: center;">
-<div class="card-title">Karگاه QR Code (دسترسی سریع)</div>
-<p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">اسکن کنید</p>
-<div id="qrcode"></div>
-</div>
+<!-- VIEW 3: PERFORMANCE GRAPH -->
+<div id="view-performance" class="view-section">
 <div class="card">
-<div class="card-title">Personel Performansi</div>
-<canvas id="perfChart" style="max-height: 180px;"></canvas>
+<div class="card-title">Personel Performans Grafiği (Stun)</div>
+<canvas id="perfChart" style="max-height: 220px;"></canvas>
 </div>
 </div>
 </div>
 
 <!-- NAVIGATION -->
 <nav class="bottom-nav">
-<button class="nav-item active" onclick="switchView('entry', this)"><span>Kayit</span></button>
-<button class="nav-item" onclick="switchView('manager', this)"><span>Yonetici</span></button>
-<button class="nav-item" onclick="switchView('qr', this)"><span>QR & Grafik</span></button>
+<button class="nav-item active" onclick="switchView('entry', this)"><span>📝</span><span>Kayıt</span></button>
+<button class="nav-item" onclick="switchView('manager', this)"><span>📊</span><span>Yönetici</span></button>
+<button class="nav-item" onclick="switchView('performance', this)"><span>⭐</span><span>Performans</span></button>
 </nav>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
 let currentPersonnel = 'Ahmet';
-let currentStage = 'Ilik Acma';
+let currentStage = 'İlik Açma';
 let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
 
 function selectPersonnel(name, element) {
@@ -242,25 +224,14 @@ document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')
 document.getElementById('view-' + viewName).classList.add('active');
 btn.classList.add('active');
 if(viewName === 'manager') { updateManagerPanel(); renderBrandChart(); }
-if(viewName === 'qr') { renderPerfChart(); generateQRCode(); }
+if(viewName === 'performance') renderPerfChart();
 }
 
 function calculateHours(start, end) {
 let [sH, sM] = start.split(':').map(Number);
 let [eH, eM] = end.split(':').map(Number);
-
-
 let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
-if (diffMinutes <= 0) return '1 Saat';
-let hours = Math.floor(diffMinutes / 60);
-let minutes = diffMinutes % 60;
-if (hours > 0 && minutes > 0) {
-return ${hours} Saat ${minutes} Dk;
-} else if (hours > 0) {
-return ${hours} Saat;
-} else {
-return ${minutes} Dk;
-}
+return diffMinutes > 0 ? (diffMinutes / 60).toFixed(1) : 0.5;
 }
 
 function saveRecordToCloud() {
@@ -268,24 +239,27 @@ const qty = parseInt(document.getElementById('quantity-input').value);
 const startTime = document.getElementById('start-time').value;
 const endTime = document.getElementById('end-time').value;
 
-if(!qty || qty <= 0) { alert('Lutfen gecerli bir adet giriniz!'); return; }
+if(!qty || qty <= 0) { alert('Lütfen geçerli bir adet giriniz!'); return; }
 
-const duration = calculateHours(startTime, endTime);
+const durationHours = calculateHours(startTime, endTime);
 
 const record = {
 personnel: currentPersonnel,
 stage: currentStage,
 brand: document.getElementById('brand-select').value,
 model: document.getElementById('model-select').value,
+size: document.getElementById('size-select').value,
 quantity: qty,
-duration: ${startTime} - ${endTime} (${duration})
+duration: durationHours + ' Saat'
 };
 
+
+// Localstorage update for immediate chart feedback
 localRecords.unshift(record);
 localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
 
 const btn = document.querySelector('.btn-submit');
-btn.innerText = 'Kaydediliyor...';
+btn.innerText = '⏳ Kaydediliyor...';
 btn.disabled = true;
 
 fetch(SCRIPT_URL, {
@@ -294,44 +268,21 @@ mode: 'no-cors',
 headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify(record)
 }).then(() => {
-alert('Basariyla kaydedildi!');
-btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
+alert('✅ Kayıt Google Sheets ve sisteme başarıyla işlendi!');
+btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
 btn.disabled = false;
-updateManagerPanel();
 }).catch(error => {
 console.error('Error:', error);
-alert('Google Sheets baglantisinda hata olustu ancak yerel kaydedildi.');
-btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
+alert('⚠️ Google Sheets bağlantısında hata oluştu ancak yerel olarak kaydedildi.');
+btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
 btn.disabled = false;
 });
-}
-
-function deleteRecord(index) {
-if(confirm('Bu kaydi silmek istediginize emin misiniz?')) {
-localRecords.splice(index, 1);
-localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
-updateManagerPanel();
-renderBrandChart();
-}
 }
 
 function updateManagerPanel() {
 let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
-document.getElementById('stat-count').innerText = localRecords.length + ' Kayit';
+document.getElementById('stat-count').innerText = localRecords.length + ' Kayıt';
 document.getElementById('stat-total').innerText = totalQty + ' Adet';
-
-let html = '';
-localRecords.forEach((r, index) => {
-html += 
-<div class="record-item">
-<div>
-<strong>${r.personnel}</strong> - ${r.brand} (${r.quantity} Adet)<br>
-<small style="color:var(--text-muted);">${r.stage} | ${r.duration}</small>
-</div>
-<button class="btn-delete" onclick="deleteRecord(${index})">Sil 🗑️</button>
-</div>;
-});
-document.getElementById('records-list').innerHTML = html || 'Kayit bulunmuyor.';
 }
 
 let brandChartObj = null;
@@ -339,7 +290,6 @@ function renderBrandChart() {
 const ctx = document.getElementById('brandChart').getContext('2d');
 const brandTotals = {};
 localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
-
 
 if(brandChartObj) brandChartObj.destroy();
 brandChartObj = new Chart(ctx, {
@@ -366,21 +316,9 @@ perfChartObj = new Chart(ctx, {
 type: 'bar',
 data: {
 labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
-datasets: [{ label: 'Uretim Miktari', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
+datasets: [{ label: 'Üretim Miktarı', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
 },
 options: { responsive: true, scales: { y: { beginAtZero: true } } }
-});
-}
-
-let qrInitialized = false;
-function generateQRCode() {
-const qrContainer = document.getElementById("qrcode");
-if(!qrContainer) return;
-qrContainer.innerHTML = "";
-new QRCode(qrContainer, {
-text: window.location.href,
-width: 140,
-height: 140
 });
 }
 </script>
