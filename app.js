@@ -1,4 +1,3 @@
-
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
 let currentPersonnel = 'Ahmet';
 let currentStage = 'İlik Açma';
