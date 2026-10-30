@@ -1,327 +1,320 @@
-
 <!DOCTYPE html>
 <html lang="tr" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tekstil Üretim & Zaman Takip Pro</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-:root {
---bg-main: #0f172a;
---card-bg: #1e293b;
---primary: #2563eb;
---accent: #38bdf8;
---success: #22c55e;
---text-main: #f8fafc;
---text-muted: #94a3b8;
---border: #334155;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekstil Üretim & Zaman Takip Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #2563eb;
+            --accent: #38bdf8;
+            --success: #22c55e;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 90px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 90px; }
 
-.container { max-width: 700px; margin: 0 auto; padding: 15px; }
+        .container { max-width: 700px; margin: 0 auto; padding: 15px; }
 
-header {
-display: flex; justify-content: space-between; align-items: center;
-background: var(--card-bg); padding: 15px; border-radius: 12px;
-border: 1px solid var(--border); margin-bottom: 15px;
-}
-.logo-title { display: flex; align-items: center; gap: 10px; }
-.logo-icon { background: var(--primary); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; }
-h1 { font-size: 1.1rem; color: var(--text-main); }
-p.sub { font-size: 0.75rem; color: var(--text-muted); }
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--card-bg); padding: 15px; border-radius: 12px;
+            border: 1px solid var(--border); margin-bottom: 15px;
+        }
+        .logo-title { display: flex; align-items: center; gap: 10px; }
+        .logo-icon { background: var(--primary); padding: 8px 12px; border-radius: 8px; font-size: 1.2rem; }
+        h1 { font-size: 1.1rem; color: var(--text-main); }
+        p.sub { font-size: 0.75rem; color: var(--text-muted); }
 
-.card {
-background: var(--card-bg); border: 1px solid var(--border);
-border-radius: 12px; padding: 15px; margin-bottom: 12px;
-}
-.card-title { font-size: 0.9rem; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
+        .card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 15px; margin-bottom: 12px;
+        }
+        .card-title { font-size: 0.9rem; font-weight: bold; color: var(--accent); margin-bottom: 10px; }
 
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
 
-.btn-select {
-background: #0f172a; border: 1px solid var(--border); color: var(--text-muted);
-padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;
-}
-.btn-select.active { background: var(--primary); color: white; border-color: var(--accent); font-weight: bold; }
+        .btn-select {
+            background: #0f172a; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 0.85rem;
+        }
+        .btn-select.active { background: var(--primary); color: white; border-color: var(--accent); font-weight: bold; }
 
-.time-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-label { font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
-input, select {
-width: 100%; background: #0f172a; border: 1px solid var(--border);
-color: var(--text-main); padding: 10px; border-radius: 8px; outline: none; font-size: 0.85rem;
-}
+        .time-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        label { font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
+        input, select {
+            width: 100%; background: #0f172a; border: 1px solid var(--border);
+            color: var(--text-main); padding: 10px; border-radius: 8px; outline: none; font-size: 0.85rem;
+        }
 
-.btn-submit {
-width: 100%; background: var(--success); color: white; border: none;
-padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold;
-cursor: pointer; margin-top: 10px; transition: 0.2s;
-}
-.btn-submit:hover { opacity: 0.9; }
+        .btn-submit {
+            width: 100%; background: var(--success); color: white; border: none;
+            padding: 14px; border-radius: 10px; font-size: 1rem; font-weight: bold;
+            cursor: pointer; margin-top: 10px; transition: 0.2s;
+        }
+        .btn-submit:hover { opacity: 0.9; }
 
-.bottom-nav {
-position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg);
-border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 999;
-}
-.nav-item {
-background: none; border: none; color: var(--text-muted); font-size: 0.8rem;
-cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
-}
-.nav-item.active { color: var(--accent); font-weight: bold; }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 999;
+        }
+        .nav-item {
+            background: none; border: none; color: var(--text-muted); font-size: 0.8rem;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
+        }
+        .nav-item.active { color: var(--accent); font-weight: bold; }
 
-.view-section { display: none; }
-.view-section.active { display: block; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
 
-.kpi-card {
-background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
-display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
-}
-.kpi-val { font-weight: bold; color: var(--accent); }
-</style>
+        .kpi-card {
+            background: #0f172a; padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .kpi-val { font-weight: bold; color: var(--accent); }
+    </style>
 </head>
 <body>
-
-
 <div class="container">
-<header>
-<div class="logo-title">
-<div class="logo-icon">🧵</div>
-<div>
-<h1>Tekstil Takip Pro</h1>
-<p class="sub">Bulut Google Sheets Entegrasyonu</p>
-</div>
-</div>
-</header>
+        <header>
+            <div class="logo-title">
+                <div class="logo-icon">🧵</div>
+                <div>
+                    <h1>Tekstil Takip Pro</h1>
+                    <p class="sub">Bulut Google Sheets Entegrasyonu</p>
+                </div>
+            </div>
+        </header>
 
-<!-- VIEW 1: RECORD ENTRY -->
-<div id="view-entry" class="view-section active">
-<div class="card">
-<div class="card-title">1. Personel Seçiniz</div>
-<div class="grid-3" id="personnel-grid">
-<div class="btn-select active" onclick="selectPersonnel('Ahmet', this)">Ahmet</div>
-<div class="btn-select" onclick="selectPersonnel('Mehmet', this)">Mehmet</div>
-<div class="btn-select" onclick="selectPersonnel('Ali', this)">Ali</div>
-<div class="btn-select" onclick="selectPersonnel('Can', this)">Can</div>
-<div class="btn-select" onclick="selectPersonnel('Zeynep', this)">Zeynep</div>
-<div class="btn-select" onclick="selectPersonnel('Ahoora', this)">Ahoora</div>
-</div>
-</div>
+        <!-- VIEW 1: RECORD ENTRY -->
+        <div id="view-entry" class="view-section active">
+            <div class="card">
+                <div class="card-title">1. Personel Seçiniz</div>
+                <div class="grid-3" id="personnel-grid">
+                    <div class="btn-select active" onclick="selectPersonnel('Ahmet', this)">Ahmet</div>
+                    <div class="btn-select" onclick="selectPersonnel('Mehmet', this)">Mehmet</div>
+                    <div class="btn-select" onclick="selectPersonnel('Ali', this)">Ali</div>
+                    <div class="btn-select" onclick="selectPersonnel('Can', this)">Can</div>
+                    <div class="btn-select" onclick="selectPersonnel('Zeynep', this)">Zeynep</div>
+                    <div class="btn-select" onclick="selectPersonnel('Ahoora', this)">Ahoora</div>
+                </div>
+            </div>
 
-<div class="card">
-<div class="card-title">2. Yapılan İş / Aşama</div>
-<div class="grid-2" id="stage-grid">
-<div class="btn-select active" onclick="selectStage('İlik Açma', this)">🔘 İlik Açma</div>
-<div class="btn-select" onclick="selectStage('Düğme Yer', this)">🎯 Düğme Yeri</div>
-<div class="btn-select" onclick="selectStage('Düğme Dikim', this)">⭕ Düğme Dikimi</div>
-<div class="btn-select" onclick="selectStage('Paketleme', this)">📦 Paketleme</div>
-</div>
-</div>
+            <div class="card">
+                <div class="card-title">2. Yapılan İş / Aşama</div>
+                <div class="grid-2" id="stage-grid">
+                    <div class="btn-select active" onclick="selectStage('İlik Açma', this)">🔘 İlik Açma</div>
+                    <div class="btn-select" onclick="selectStage('Düğme Yer', this)">🎯 Düğme Yeri</div>
+                    <div class="btn-select" onclick="selectStage('Düğme Dikim', this)">⭕ Düğme Dikimi</div>
+                    <div class="btn-select" onclick="selectStage('Paketleme', this)">📦 Paketleme</div>
+                </div>
+            </div>
 
-<div class="card">
-<div class="card-title">3. Marka, Model & Miktar</div>
-<div class="grid-2">
-<div>
-<label>Marka</label>
-<select id="brand-select">
-<option>LC Waikiki</option>
-<option>Mavi</option>
-<option>DeFacto</option>
-<option>Koton</option>
-</select>
-</div>
-<div>
-<label>Model</label>
-<select id="model-select">
-<option>Gömlek 101</option>
-<option>Pantolon 202</option>
-<option>Mont 303</option>
-</select>
-</div>
-</div>
-<div style="margin-top: 10px;">
-<label>Beden ve Adet</label>
-<div class="grid-2">
-<select id="size-select">
-<option>XS</option><option>S</option><option selected>M</option>
-<option>L</option><option>XL</option><option>XXL</option>
-</select>
-<input type="number" id="quantity-input" value="100" placeholder="Miktar">
-</div>
-</div>
-</div>
+            <div class="card">
+                <div class="card-title">3. Marka, Model & Miktar</div>
+                <div class="grid-2">
+                    <div>
+                        <label>Marka</label>
+                        <select id="brand-select">
+                            <option>LC Waikiki</option>
+                            <option>Mavi</option>
+                            <option>DeFacto</option>
+                            <option>Koton</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Model</label>
+                        <select id="model-select">
+                            <option>Gömlek 101</option>
+                            <option>Pantolon 202</option>
+                            <option>Mont 303</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <label>Beden ve Adet</label>
+                    <div class="grid-2">
+                        <select id="size-select">
+                            <option>XS</option><option>S</option><option selected>M</option>
+                            <option>L</option><option>XL</option><option>XXL</option>
+                        </select>
+                        <input type="number" id="quantity-input" value="100" placeholder="Miktar">
+                    </div>
+                </div>
+            </div>
 
-<div class="card">
-<div class="card-title">4. Çalışma Zamanı (Saat Takibi)</div>
-<div class="time-inputs">
-<div>
-<label>Başlangıç Saati</label>
-<input type="time" id="start-time" value="08:30">
-</div>
-<div>
-<label>Bitiş Saati</label>
-<input type="time" id="end-time" value="12:00">
-</div>
-</div>
-</div>
+            <div class="card">
+                <div class="card-title">4. Çalışma Zamanı (Saat Takibi)</div>
+                <div class="time-inputs">
+                    <div>
+                        <label>Başlangıç Saati</label>
+                        <input type="time" id="start-time" value="08:30">
+                    </div>
+                    <div>
+                        <label>Bitiş Saati</label>
+                        <input type="time" id="end-time" value="12:00">
+                    </div>
+                </div>
+            </div>
 
-<button class="btn-submit" onclick="saveRecordToCloud()">☁️ GOOGLE SHEETS'E KAYDET</button>
-</div>
-
-
+            <button class="btn-submit" onclick="saveRecordToCloud()">☁️ GOOGLE SHEETS'E KAYDET</button>
+        </div>
 <!-- VIEW 2: MANAGER & CHARTS -->
-<div id="view-manager" class="view-section">
-<div class="card">
-<div class="card-title">Yönetici Özet Raporu</div>
-<div class="kpi-card"><span>Toplam Kayıt:</span> <span class="kpi-val" id="stat-count">0 Kayıt</span></div>
-<div class="kpi-card"><span>Toplam Üretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
-</div>
+        <div id="view-manager" class="view-section">
+            <div class="card">
+                <div class="card-title">Yönetici Özet Raporu</div>
+                <div class="kpi-card"><span>Toplam Kayıt:</span> <span class="kpi-val" id="stat-count">0 Kayıt</span></div>
+                <div class="kpi-card"><span>Toplam Üretim:</span> <span class="kpi-val" id="stat-total">0 Adet</span></div>
+            </div>
 
-<div class="card">
-<div class="card-title">Marka Bazlı Dağılım (Dairesel)</div>
-<canvas id="brandChart" style="max-height: 200px;"></canvas>
-</div>
-</div>
+            <div class="card">
+                <div class="card-title">Marka Bazlı Dağılım (Dairesel)</div>
+                <canvas id="brandChart" style="max-height: 200px;"></canvas>
+            </div>
+        </div>
 
-<!-- VIEW 3: PERFORMANCE GRAPH -->
-<div id="view-performance" class="view-section">
-<div class="card">
-<div class="card-title">Personel Performans Grafiği (Stun)</div>
-<canvas id="perfChart" style="max-height: 220px;"></canvas>
-</div>
-</div>
-</div>
+        <!-- VIEW 3: PERFORMANCE GRAPH -->
+        <div id="view-performance" class="view-section">
+            <div class="card">
+                <div class="card-title">Personel Performans Grafiği (Stun)</div>
+                <canvas id="perfChart" style="max-height: 220px;"></canvas>
+            </div>
+        </div>
+    </div>
 
-<!-- NAVIGATION -->
-<nav class="bottom-nav">
-<button class="nav-item active" onclick="switchView('entry', this)"><span>📝</span><span>Kayıt</span></button>
-<button class="nav-item" onclick="switchView('manager', this)"><span>📊</span><span>Yönetici</span></button>
-<button class="nav-item" onclick="switchView('performance', this)"><span>⭐</span><span>Performans</span></button>
-</nav>
+    <!-- NAVIGATION -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchView('entry', this)"><span>📝</span><span>Kayıt</span></button>
+        <button class="nav-item" onclick="switchView('manager', this)"><span>📊</span><span>Yönetici</span></button>
+        <button class="nav-item" onclick="switchView('performance', this)"><span>⭐</span><span>Performans</span></button>
+    </nav>
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
-let currentPersonnel = 'Ahmet';
-let currentStage = 'İlik Açma';
-let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbySoJL0Ahz_Xdgav1-krAuT_ttXqTNTI1FiCQEoZ66rpObVK0dHfBxHi33788NfJMua/exec";
+        let currentPersonnel = 'Ahmet';
+        let currentStage = 'İlik Açma';
+        let localRecords = JSON.parse(localStorage.getItem('tekstil_pro_records') || '[]');
 
-function selectPersonnel(name, element) {
-currentPersonnel = name;
-document.querySelectorAll('#personnel-grid .btn-select').forEach(b => b.classList.remove('active'));
-element.classList.add('active');
-}
+        function selectPersonnel(name, element) {
+            currentPersonnel = name;
+            document.querySelectorAll('#personnel-grid .btn-select').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-function selectStage(stage, element) {
-currentStage = stage;
-document.querySelectorAll('#stage-grid .btn-select').forEach(b => b.classList.remove('active'));
-element.classList.add('active');
-}
+        function selectStage(stage, element) {
+            currentStage = stage;
+            document.querySelectorAll('#stage-grid .btn-select').forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-function switchView(viewName, btn) {
-document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
-document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-document.getElementById('view-' + viewName).classList.add('active');
-btn.classList.add('active');
-if(viewName === 'manager') { updateManagerPanel(); renderBrandChart(); }
-if(viewName === 'performance') renderPerfChart();
-}
+        function switchView(viewName, btn) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('view-' + viewName).classList.add('active');
+            btn.classList.add('active');
+            if(viewName === 'manager') { updateManagerPanel(); renderBrandChart(); }
+            if(viewName === 'performance') renderPerfChart();
+        }
 
-function calculateHours(start, end) {
-let [sH, sM] = start.split(':').map(Number);
-let [eH, eM] = end.split(':').map(Number);
-let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
-return diffMinutes > 0 ? (diffMinutes / 60).toFixed(1) : 0.5;
-}
+        function calculateHours(start, end) {
+            let [sH, sM] = start.split(':').map(Number);
+            let [eH, eM] = end.split(':').map(Number);
+            let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
+            return diffMinutes > 0 ? (diffMinutes / 60).toFixed(1) : 0.5;
+        }
 
-function saveRecordToCloud() {
-const qty = parseInt(document.getElementById('quantity-input').value);
-const startTime = document.getElementById('start-time').value;
-const endTime = document.getElementById('end-time').value;
+        function saveRecordToCloud() {
+            const qty = parseInt(document.getElementById('quantity-input').value);
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
 
-if(!qty || qty <= 0) { alert('Lütfen geçerli bir adet giriniz!'); return; }
+            if(!qty || qty <= 0) { alert('Lütfen geçerli bir adet giriniz!'); return; }
 
-const durationHours = calculateHours(startTime, endTime);
+            const durationHours = calculateHours(startTime, endTime);
 
-const record = {
-personnel: currentPersonnel,
-stage: currentStage,
-brand: document.getElementById('brand-select').value,
-model: document.getElementById('model-select').value,
-size: document.getElementById('size-select').value,
-quantity: qty,
-duration: durationHours + ' Saat'
-};
-
-
+            const record = {
+                personnel: currentPersonnel,
+                stage: currentStage,
+                brand: document.getElementById('brand-select').value,
+                model: document.getElementById('model-select').value,
+                size: document.getElementById('size-select').value,
+                quantity: qty,
+                duration: durationHours + ' Saat'
+            };
 // Localstorage update for immediate chart feedback
-localRecords.unshift(record);
-localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
+            localRecords.unshift(record);
+            localStorage.setItem('tekstil_pro_records', JSON.stringify(localRecords));
 
-const btn = document.querySelector('.btn-submit');
-btn.innerText = '⏳ Kaydediliyor...';
-btn.disabled = true;
+            const btn = document.querySelector('.btn-submit');
+            btn.innerText = '⏳ Kaydediliyor...';
+            btn.disabled = true;
 
-fetch(SCRIPT_URL, {
-method: 'POST',
-mode: 'no-cors',
-headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify(record)
-}).then(() => {
-alert('✅ Kayıt Google Sheets ve sisteme başarıyla işlendi!');
-btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
-btn.disabled = false;
-}).catch(error => {
-console.error('Error:', error);
-alert('⚠️ Google Sheets bağlantısında hata oluştu ancak yerel olarak kaydedildi.');
-btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
-btn.disabled = false;
-});
-}
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(record)
+            }).then(() => {
+                alert('✅ Kayıt Google Sheets ve sisteme başarıyla işlendi!');
+                btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
+                btn.disabled = false;
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('⚠️ Google Sheets bağlantısında hata oluştu ancak yerel olarak kaydedildi.');
+                btn.innerText = '☁️ GOOGLE SHEETS\'E KAYDET';
+                btn.disabled = false;
+            });
+        }
 
-function updateManagerPanel() {
-let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
-document.getElementById('stat-count').innerText = localRecords.length + ' Kayıt';
-document.getElementById('stat-total').innerText = totalQty + ' Adet';
-}
+        function updateManagerPanel() {
+            let totalQty = localRecords.reduce((s, r) => s + r.quantity, 0);
+            document.getElementById('stat-count').innerText = localRecords.length + ' Kayıt';
+            document.getElementById('stat-total').innerText = totalQty + ' Adet';
+        }
 
-let brandChartObj = null;
-function renderBrandChart() {
-const ctx = document.getElementById('brandChart').getContext('2d');
-const brandTotals = {};
-localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
+        let brandChartObj = null;
+        function renderBrandChart() {
+            const ctx = document.getElementById('brandChart').getContext('2d');
+            const brandTotals = {};
+            localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
 
-if(brandChartObj) brandChartObj.destroy();
-brandChartObj = new Chart(ctx, {
-type: 'doughnut',
-data: {
-labels: Object.keys(brandTotals).length ? Object.keys(brandTotals) : ['Veri Yok'],
-datasets: [{
-data: Object.values(brandTotals).length ? Object.values(brandTotals) : [1],
-backgroundColor: ['#2563eb', '#38bdf8', '#22c55e', '#f59e0b']
-}]
-},
-options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } } }
-});
-}
+            if(brandChartObj) brandChartObj.destroy();
+            brandChartObj = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(brandTotals).length ? Object.keys(brandTotals) : ['Veri Yok'],
+                    datasets: [{
+                        data: Object.values(brandTotals).length ? Object.values(brandTotals) : [1],
+                        backgroundColor: ['#2563eb', '#38bdf8', '#22c55e', '#f59e0b']
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc' } } } }
+            });
+        }
 
-let perfChartObj = null;
-function renderPerfChart() {
-const ctx = document.getElementById('perfChart').getContext('2d');
-const personnelTotals = {};
-localRecords.forEach(r => { personnelTotals[r.personnel] = (personnelTotals[r.personnel] || 0) + r.quantity; });
+        let perfChartObj = null;
+        function renderPerfChart() {
+            const ctx = document.getElementById('perfChart').getContext('2d');
+            const personnelTotals = {};
+            localRecords.forEach(r => { personnelTotals[r.personnel] = (personnelTotals[r.personnel] || 0) + r.quantity; });
 
-if(perfChartObj) perfChartObj.destroy();
-perfChartObj = new Chart(ctx, {
-type: 'bar',
-data: {
-labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
-datasets: [{ label: 'Üretim Miktarı', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
-},
-options: { responsive: true, scales: { y: { beginAtZero: true } } }
-});
-}
-</script>
+            if(perfChartObj) perfChartObj.destroy();
+            perfChartObj = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(personnelTotals).length ? Object.keys(personnelTotals) : ['Veri Yok'],
+                    datasets: [{ label: 'Üretim Miktarı', data: Object.values(personnelTotals), backgroundColor: '#38bdf8', borderRadius: 6 }]
+                },
+                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+            });
+        }
+    </script>
 </body>
 </html>
