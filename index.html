@@ -19,7 +19,7 @@
             --border: #334155;
         }
 
-         { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); padding-bottom: 90px; }
 
         .container { max-width: 700px; margin: 0 auto; padding: 15px; }
@@ -197,7 +197,7 @@
         <div id="view-qr" class="view-section">
             <div class="card" style="text-align: center;">
                 <div class="card-title">Karگاه QR Code (دسترسی سریع)</div>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Для входа сканируйте / اسکن کنید</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">اسکن کنید</p>
                 <div id="qrcode"></div>
             </div>
             <div class="card">
@@ -243,8 +243,8 @@
 
         function calculateHours(start, end) {
             let [sH, sM] = start.split(':').map(Number);
-let [eH, eM] = end.split(':').map(Number);
-            let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
+            let [eH, eM] = end.split(':').map(Number);
+let diffMinutes = (eH * 60 + eM) - (sH * 60 + sM);
             if (diffMinutes <= 0) return '1 Saat';
             let hours = Math.floor(diffMinutes / 60);
             let minutes = diffMinutes % 60;
