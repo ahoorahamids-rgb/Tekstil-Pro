@@ -83,7 +83,6 @@ display: flex; justify-content: space-between; align-items: center; margin-botto
 }
 .kpi-val { font-weight: bold; color: var(--accent); }
 
-
 .record-item {
 background: #0f172a; border-left: 4px solid var(--primary); padding: 10px;
 border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem;
@@ -162,7 +161,6 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 </div>
 
-
 <div class="card">
 <div class="card-title">4. Calisma Zamani</div>
 <div class="time-inputs">
@@ -189,7 +187,7 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 
 <div class="card">
-<div class="card-title">Kayit Yonetimi (Sil / سطل آشغال)</div>
+<div class="card-title">Kayit Yonetimi (Sil)</div>
 <div id="records-list">Kayit bulunmuyor.</div>
 </div>
 
@@ -202,8 +200,7 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 <!-- VIEW 3: FINANCE & ADVANCE (MAAS & AVANS) -->
 <div id="view-finance" class="view-section">
 <div class="card">
-<div class="card-title">💰 Finans & Maas / Avans Yonetimi</div>
-<p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">ثبت مساعده (آوانس) و محاسبه مانده حقوق</p>
+<div class="card-title">Finans & Maas / Avans Yonetimi</div>
 
 <div style="margin-bottom: 8px;">
 <label>Secilen Personel</label>
@@ -224,7 +221,7 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 <input type="number" id="base-salary" value="35000">
 </div>
 <div>
-<label>Avans / Misaade (TL)</label>
+<label>Avans (TL)</label>
 <input type="number" id="advance-amount" value="5000">
 </div>
 </div>
@@ -232,16 +229,16 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 
 <div class="card">
-<div class="card-title">📊 وضعیت پرداختی‌ها و تسویه</div>
-<div id="finance-list">ثبتی انجام نشده است.</div>
+<div class="card-title">Odemeler ve Tesviye</div>
+<div id="finance-list">Kayitli veri bulunmuyor.</div>
 </div>
 </div>
 
 <!-- VIEW 4: QR CODE & PERFORMANCE -->
 <div id="view-qr" class="view-section">
 <div class="card" style="text-align: center;">
-<div class="card-title">Karگاه QR Code (دسترسی سریع)</div>
-<p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">اسکن کنید</p>
+<div class="card-title">QR Code (Erisim)</div>
+<p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Taratin</p>
 <div id="qrcode"></div>
 </div>
 <div class="card">
@@ -251,9 +248,9 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 </div>
 
-
 <!-- NAVIGATION -->
 <nav class="bottom-nav">
+
 <button class="nav-item active" onclick="switchView('entry', this)"><span>Kayit</span></button>
 <button class="nav-item" onclick="switchView('manager', this)"><span>Yonetici</span></button>
 <button class="nav-item" onclick="switchView('finance', this)"><span>Maas</span></button>
@@ -334,9 +331,8 @@ fetch(SCRIPT_URL, {
 method: 'POST',
 mode: 'no-cors',
 headers: { 'Content-Type': 'application/json' },
-
-
 body: JSON.stringify(record)
+
 }).then(() => {
 alert('Basariyla kaydedildi!');
 btn.innerText = 'GOOGLE SHEETS\'E KAYDET';
@@ -372,7 +368,7 @@ html +=
 <strong>${r.personnel}</strong> - ${r.brand} (${r.quantity} Adet)<br>
 <small style="color:var(--text-muted);">${r.stage} | ${r.duration}</small>
 </div>
-<button class="btn-delete" onclick="deleteRecord(${index})">Sil 🗑️</button>
+<button class="btn-delete" onclick="deleteRecord(${index})">Sil</button>
 </div>;
 });
 document.getElementById('records-list').innerHTML = html || 'Kayit bulunmuyor.';
@@ -390,7 +386,7 @@ localFinances[p].base = base;
 localFinances[p].advances.push({ amount: adv, date: new Date().toLocaleDateString() });
 
 localStorage.setItem('tekstil_pro_finances', JSON.stringify(localFinances));
-alert('Avans basariyla kaydedildi ve hesaplandi!');
+alert('Avans basariyla kaydedildi!');
 updateFinancePanel();
 }
 
@@ -402,7 +398,7 @@ let totalAdv = data.advances.reduce((sum, a) => sum + a.amount, 0);
 let remaining = data.base - totalAdv;
 html += 
 <div class="record-item" style="flex-direction: column; align-items: flex-start; gap: 4px;">
-<strong>👤 ${p}</strong>
+<strong>${p}</strong>
 <div>Maas Tabani: <span style="color:var(--accent);">${data.base} TL</span></div>
 <div>Toplam Avans: <span style="color:var(--warning);">${totalAdv} TL</span></div>
 <div><b>Kalan Odeme (Net):</b> <span style="color:var(--success);">${remaining} TL</span></div>
@@ -416,7 +412,6 @@ function renderBrandChart() {
 const ctx = document.getElementById('brandChart').getContext('2d');
 const brandTotals = {};
 localRecords.forEach(r => { brandTotals[r.brand] = (brandTotals[r.brand] || 0) + r.quantity; });
-
 
 if(brandChartObj) brandChartObj.destroy();
 brandChartObj = new Chart(ctx, {
