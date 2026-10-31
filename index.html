@@ -162,6 +162,7 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 </div>
 
+
 <div class="card">
 <div class="card-title">4. Calisma Zamani</div>
 <div class="time-inputs">
@@ -250,6 +251,7 @@ border-radius: 6px; cursor: pointer; font-size: 0.75rem;
 </div>
 </div>
 
+
 <!-- NAVIGATION -->
 <nav class="bottom-nav">
 <button class="nav-item active" onclick="switchView('entry', this)"><span>Kayit</span></button>
@@ -332,6 +334,7 @@ fetch(SCRIPT_URL, {
 method: 'POST',
 mode: 'no-cors',
 headers: { 'Content-Type': 'application/json' },
+
 
 body: JSON.stringify(record)
 }).then(() => {
